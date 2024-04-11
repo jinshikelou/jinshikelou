@@ -1,0 +1,12 @@
+在RxJS中，switchMap、mergeMap和map是三个不同的操作符，它们分别适用于不同的场景。
+
+1. switchMap: switchMap操作符将源Observable发出的每个值都映射成一个新的Observable，并且只发出最新的Observable的值。如果在源Observable发出新值之前，前一个Observable还未完成，那么前一个Observable会被取消订阅。适用于需要取消前一个Observable的场景，比如处理用户输入的搜索建议。
+
+2. mergeMap: mergeMap操作符将源Observable发出的每个值都映射成一个新的Observable，并且同时订阅所有的新Observable，将它们的值合并成一个输出Observable。适用于需要同时处理多个并发请求的场景，比如同时发送多个HTTP请求。
+
+3. map: map操作符将源Observable发出的每个值都通过一个函数进行映射，并将映射后的值作为输出Observable的值。适用于单纯的值转换场景，不涉及到Observable的创建和合并。
+
+总结：
+- switchMap适用于需要取消前一个Observable的场景，只关心最新的Observable的值。
+- mergeMap适用于需要同时处理多个并发请求的场景，将多个Observable的值合并成一个输出Observable。
+- map适用于单纯的值转换场景，不涉及到Observable的创建和合并。
