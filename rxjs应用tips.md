@@ -10,6 +10,8 @@
   - switchMap适用于需要取消前一个Observable的场景，只关心最新的Observable的值。
   - mergeMap适用于需要同时处理多个并发请求的场景，将多个Observable的值合并成一个输出Observable。
   - map适用于单纯的值转换场景，不涉及到Observable的创建和合并。
+
+    
 二、of() vs. from()
   rxjs中的of()和from()都是用于创建Observable的操作符.
   1. of()操作符可以接受任意数量的参数，并将这些参数依次发出。例如：of(1, 2, 3).subscribe(value => console.log(value)); // 1 2 3
