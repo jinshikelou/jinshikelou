@@ -1,0 +1,29 @@
+$bg-color: #eee;
+
+div,
+body,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: $bg-color;
+    user-select: none; //禁用文字选中
+}
+
+img {
+    -webkit-user-drag: none; //禁止拖动图片
+}
+
+.demo-logo {
+    width: 120px;
+    height: 32px;
+    background: rgba(255, 255, 255, .2);
+    border-radius: 6px;
+}
+
+.ant-layout-sider-trigger {
+    background: $bg-color;
+    color: #002140;
+}

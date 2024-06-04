@@ -1,0 +1,62 @@
+[
+    {
+        "url": "#",
+        "text": "Overview",
+        "depth": 2
+    },
+    {
+        "url": "#components",
+        "depth": 2,
+        "text": "Creating and nesting components "
+    },
+    {
+        "url": "#writing-markup-with-jsx",
+        "depth": 2,
+        "text": "Writing markup with JSX "
+    },
+    {
+        "url": "#adding-styles",
+        "depth": 2,
+        "text": "Adding styles "
+    },
+    {
+        "url": "#displaying-data",
+        "depth": 2,
+        "text": "Displaying data "
+    },
+    {
+        "url": "#conditional-rendering",
+        "depth": 2,
+        "text": "Conditional rendering "
+    },
+    {
+        "url": "#rendering-lists",
+        "depth": 2,
+        "text": "Rendering lists "
+    },
+    {
+        "url": "#responding-to-events",
+        "depth": 2,
+        "text": "Responding to events "
+    },
+    {
+        "url": "#updating-the-screen",
+        "depth": 2,
+        "text": "Updating the screen "
+    },
+    {
+        "url": "#using-hooks",
+        "depth": 2,
+        "text": "Using Hooks "
+    },
+    {
+        "url": "#sharing-data-between-components",
+        "depth": 2,
+        "text": "Sharing data between components "
+    },
+    {
+        "url": "#next-steps",
+        "depth": 2,
+        "text": "Next Steps "
+    }
+]
