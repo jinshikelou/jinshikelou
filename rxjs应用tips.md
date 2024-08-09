@@ -5,11 +5,16 @@
   2. mergeMap: mergeMap操作符将源Observable发出的每个值都映射成一个新的Observable，并且同时订阅所有的新Observable，将它们的值合并成一个输出Observable。适用于需要同时处理多个并发请求的场景，比如同时发送多个HTTP请求。
   
   3. map: map操作符将源Observable发出的每个值都通过一个函数进行映射，并将映射后的值作为输出Observable的值。适用于单纯的值转换场景，不涉及到Observable的创建和合并。
+
+  4. tap: tap操作符是一个实用操作符，可用于调试或执行副作用。它不会修改通过observable链流动的数据.
+         当你想执行副作用，如为调试目的记录值； 你想根据流中的值或事件触发外部行为，如更新UI，进行额外的API调用等时， 可以使用tap。
+       tap可以在你需要与数据交互但不改变它的observable管道中的任何地方使用。它通常用在Angular应用的服务或组件中，或者在你使用RxJS observables的任何地方。
   
   总结：
   - switchMap适用于需要取消前一个Observable的场景，只关心最新的Observable的值。
   - mergeMap适用于需要同时处理多个并发请求的场景，将多个Observable的值合并成一个输出Observable。
   - map适用于单纯的值转换场景，不涉及到Observable的创建和合并。
+  - tap可以在你需要与数据交互但不改变它的observable管道中的任何地方使用。它通常用在Angular应用的服务或组件中，或者在你使用RxJS observables的任何地方。
 
     
 二、of() vs. from()
