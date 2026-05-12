@@ -1,0 +1,138 @@
+FlowPlan UI 是一个面向供应链计划协同的企业级前端系统，用来管理 FlowPlan 数据、商品计划、供应商协作、约束计算、PO Release、Shipment 校验、报表查询、文件上传和消息沟通。它同时服务内部用户和外部供应商，是一个围绕 FlowPlan 生命周期展开的业务工作台。
+
+项目背景
+
+这个系统的核心对象是 FlowPlan。业务上，一个 FlowPlan 会包含商品、供应商、PO、波次、日期、数量、仓库、约束条件、发布状态等信息。用户需要在系统里完成从 FlowPlan 上传、数据检查、协同修改、约束计算、SPT/NOVA 模板 review、PO Release、供应商确认、报表查看到归档的完整流程。
+
+技术栈
+
+当前代码里主要使用：
+
+Angular / Angular Material 构建前端页面和组件
+RxJS 管理异步数据流和组件通信
+Angular Router 做内部用户和外部供应商路由拆分
+HTTP Interceptor 处理认证、分页、埋点、Hub 请求等
+JWT / AuthGuard 做登录和角色权限控制
+SignalR 做实时消息和连接状态
+ngx-quill 做富文本评论、反馈和 release note
+ag-grid、ngx-datatable 做复杂表格
+xlsx / xlsx-js-style 做 Excel 导入导出
+ECharts 做报表图表展示
+Apollo / GraphQL 相关依赖用于部分数据查询能力
+从当前 package.json 看，主依赖是 Angular 15.x。如果面试介绍的是你升级后的分支，可以补充说你参与过 Angular 大版本升级和依赖兼容处理。
+
+整体结构
+
+项目大体可以分成四层：
+
+应用壳层：登录、路由、布局、权限、全局异常、环境配置、HTTP 拦截器
+业务页面层：FlowPlan 首页、协作、SPT、Constraint、Dotcom、Report、Archive、Upload 等
+共享能力层：表格、Excel、筛选、评论、弹窗、共享控件、图标、分页、权限按钮
+数据服务层：FlowPlan API、Constraint API、Access API、Message API、Release Note API、SignalR Hub 等
+核心模块介绍
+
+Account / Auth / Permission
+
+负责登录、跳转、验证码、内部角色管理、权限申请、用户管理、权限审批和 access review。系统区分 internal 和 external 用户，通过 AuthGuard 和路由 role 控制访问范围。内部用户可以管理权限，外部供应商只能访问供应商协作相关页面。
+
+Home / FlowPlan List
+
+这是内部用户进入系统后的主入口。用户可以搜索、筛选、打开 FlowPlan，也可以进入对应的协作、约束、SPT、Dotcom、Shipment、报表等业务页面。它承担 FlowPlan 工作台的作用。
+
+Flowplan Datatable
+
+这是项目里非常核心的表格模块，用于展示和编辑 FlowPlan 明细数据。它包含普通表格、只读表格、对比表格、wave 编辑、状态列、item 信息列、单元格输入、下拉、计算列、过滤条件、视图配置等能力。很多业务页面都依赖它来展示商品、数量、日期、供应商、wave 等数据。
+
+Collaboration / FP Collaboration
+
+这是内部协作模块。它支持用户围绕 FlowPlan 做评论、变更查看、数据回收、供应商变更 review、历史记录查看等。它解决的是 FlowPlan 处理过程中多人协作、修改追踪和业务沟通的问题。
+
+Message / Hub
+
+这是消息和实时沟通模块。它包含 message box、供应商 message box、chat room、关键字消息、消息历史等。底层结合 SignalR Hub，用于实时刷新消息、进入/离开 FlowPlan、未读状态和供应商维度消息沟通。
+
+Supplier Collaboration
+
+这是外部供应商入口，对应 /ext 路由。供应商可以进入 supplier home、查看被分享的 FlowPlan、提交或查看供应商变更、上传 Excel、管理联系人、查看 wave 数据、添加评论。这个模块是内部 FlowPlan 系统和外部供应商协同的桥梁。
+
+SPT / NOVA Template Review
+
+SPT 模块用于预览、检查、上传、下载和发布 SPT 数据。它支持按供应商展示 SPT rows，支持 Matched / Unmatched 数据切换，支持筛选、Excel 更新、PO Release 状态展示、Release confirmation、Sync PO Release Status 等。业务上它用于把 FlowPlan 数据整理成可发布的 PO/SPT 模板，并在发布前排除 dummy item、已发布、处理中或 SQ released 的数据。
+
+SQ Shipment
+
+SQ Shipment 模块用于 Shipment validation。它展示 SQ shipment 表格、wave 单元格信息，并支持导出。它面向内部和外部用户，用于检查 shipment 相关数据是否符合业务要求。
+
+Constraint / Constraint Calculation
+
+Constraint 是约束计算模块。它支持对 FlowPlan 数据执行约束计算、保存结果、确认结果、导出 constraint、查看计算日志、处理 manual result 等。里面还包含 MOQ、MOV、TR、FCL、slipsheet 等约束配置组件，以及 Plan Review、variance limit、recalc condition、constraint table 等功能。这个模块偏算法/规则计算，是 FlowPlan 计划结果生成的重要环节。
+
+Constraint Setting
+
+这是 constraint 的基础配置和控件模块。它封装了具体约束类型的编辑 UI，比如 MOQ、MOV、TR、FCL、SlipSheet，以及 constraint item table、message dialog 等。它更偏“配置层”，供 constraint calculation 页面复用。
+
+Dotcom
+
+Dotcom 模块处理 Dotcom 相关 FlowPlan 业务。它包含 Dotcom 主页面、Dotcom table、contact management、预定义 grouping、customized grouping、single item PO、cell renderers、PO cancel remark 等。它的重点是 Dotcom 业务数据管理、分组规则维护和表格编辑。
+
+Item Setting
+
+Item Setting 模块用于商品配置和 item mapping 相关设置。它支持 item setting 页面、同步 mapping、导入错误提示等。它服务于 FlowPlan 数据导入和后续 item 维度处理。
+
+Item Filter
+
+这是共享筛选模块。它提供全局 item filter、SPT filter、多选 dropdown、属性选项等能力。FlowPlan 表格、SPT、Report、Share 等页面都可能用它来按商品、供应商、状态、条件筛选数据。
+
+Excel Uploader
+
+这是 Excel 导入基础模块。它包含 Excel 到 JSON、区域上传、数据预览、警告表格、智能转换服务等。Upload FlowPlan、SPT、供应商 Excel 上传等功能都依赖它。
+
+Upload FlowPlan
+
+这是 FlowPlan 上传模块，包含完整 upload stepper、quick upload、region upload、column customize、flowplan info update、index mapping 更新等。它负责把外部 Excel 或模板数据导入系统，并转换成 FlowPlan 可用的数据结构。
+
+Report Center
+
+报表中心用于查询和展示业务报表。它包含 report home、查询条件、状态表、summary table、group table、Dotcom report table、下载、图表、tag/comment 等能力。技术上使用表格和 ECharts 来展示统计数据。
+
+Archive
+
+归档模块用于查看已归档的 FlowPlan 列表，以及进入 archived collaboration 页面查看归档后的协作数据。它和正常 FlowPlan 流程隔离，主要用于历史数据查询和追溯。
+
+FP Share
+
+分享模块用于把 FlowPlan 或供应商相关数据分享给内部用户或供应商。它包含 share dialog、supplier fields、supplier comments、email share、watch list 等功能，支持带评论的分享和通知。
+
+Cell Comment
+
+单元格评论模块提供表格 cell 级别的评论能力，包括添加评论、评论列表、输入菜单、按钮栏等。它让用户可以针对具体商品或具体数据单元做沟通和追踪。
+
+Shared Controls / Share AgGrid Table
+
+这些是底层 UI 组件库。包括 dropdown、多选、tag、header filter、custom paginator、SVG icon、权限按钮、输入控件、history log、ag-grid header/filter/cell renderer 等。它们不直接代表业务页面，但支撑了多个复杂业务模块。
+
+Release Note / Feedback / Watch List
+
+Release Note 用于展示和维护系统发布说明，Feedback 用于用户反馈，Watch List 用于关注 FlowPlan。这些属于系统运营和用户辅助功能。
+
+面试时可以这样讲
+
+我参与的是一个供应链 FlowPlan 协同平台的前端项目。它不是单纯的数据展示系统，而是覆盖 FlowPlan 全生命周期的业务工作台，包括 FlowPlan 上传、数据编辑、供应商协同、约束计算、SPT/NOVA 模板 review、PO Release、SQ Shipment 校验、Dotcom 业务、报表查询、归档和消息沟通。
+
+系统同时服务内部用户和外部供应商。内部用户可以管理 FlowPlan、做 constraint calculation、review supplier changes、release PO、查看报表；供应商可以通过外部门户查看被分享的 FlowPlan、提交变更、上传数据、维护联系人和参与评论沟通。
+
+前端技术上使用 Angular、Angular Material、RxJS、SignalR、ag-grid、ngx-datatable、xlsx、ngx-quill 和 ECharts。项目里有大量复杂表格、Excel 导入导出、富文本评论、实时消息、权限控制和 lazy-loaded 业务模块。
+
+我对这个项目的理解是：它的复杂度主要不在单个页面，而在业务链路长、模块多、数据状态多、内部外部角色不同，并且很多模块都围绕同一个 FlowPlan 数据模型联动。前端需要保证数据编辑、筛选、导入导出、发布确认、权限控制和用户反馈都足够清晰可靠。
+
+如果面试官问“你负责哪些模块”
+
+可以按你实际经历选择说：
+
+我主要参与过 SPT Release、Angular 依赖升级、样式迁移、安全漏洞处理和部分业务交互优化。比如 SPT 模块里，我处理过供应商选择、Release confirmation、不同 release status 的展示、上传结果提示等。项目维护方面，我也处理过 Angular/Material/Sass/Quill 相关兼容和安全问题。
+
+如果面试官问“项目难点是什么”
+
+可以这样答：
+
+难点主要有三个。第一是业务复杂，FlowPlan 从上传到发布会经过很多步骤，每一步都有状态和权限限制。第二是表格复杂，系统里大量页面依赖可编辑表格、筛选、导入导出和自定义 renderer。第三是协同复杂，内部用户和外部供应商看到的页面、权限和操作不同，还要支持消息、评论、变更历史和实时状态同步。这个项目让我对 Angular 大型业务系统、复杂表格、权限路由、数据流管理和前端工程化都有了比较完整的实践。
